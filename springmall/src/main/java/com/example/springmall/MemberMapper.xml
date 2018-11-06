@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+	public OTHERS_CLASS implements com.example.springmall.MemberMappe {
+	
+	}
+ --> 
+<mapper namespace="com.example.springmall.MemberMapper">
+    <select id="selectCountMember" resultType="int">
+        SELECT COUNT(*) FROM member;
+    </select>
+</mapper>
