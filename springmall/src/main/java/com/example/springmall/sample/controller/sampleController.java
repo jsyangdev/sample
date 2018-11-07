@@ -21,11 +21,15 @@ public class sampleController {
 	
 	// 1. 샘플목록
 	@RequestMapping(value="/sample/sampleList", method=RequestMethod.GET)
-	public String sampleList(Model model, @RequestParam(value="currentPage", required=false) Integer currentPage) {	// Model model = new Model();
+	public String sampleList(Model model) {	// Model model = new Model();
 		System.out.println(":::SampleService.sampleList() START:::");
 		int rowsPerPage = 10;
 		int lastPage;	// 마지막 페이지
 		// 넘어오는 currentPage
+		@RequestParam(value="currentPage", required=false) Integer currentPage
+		
+		
+		
 		if(currentPage != null) {currentPage = (int)RequestParam("currentPage");}
 		currentPage = 1;
 		System.out.println(currentPage+"<---currentPage");
