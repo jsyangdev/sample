@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	public OTHERS_CLASS implements com.example.springmall.mapper.SampleMapper {
+	
+	}
+ --> 
+<mapper namespace="com.example.springmall.mapper.SampleMapper">
+	<select id="selectSampleCount" resultType="int">
+		SELECT COUNT(*) FROM sample
+	</select>
+	<!-- delete sample -->
+	<delete id="deleteSample" parameterType="int">
+		DELETE FROM sample WHERE sampleNo=#{sampleNo}
+	</delete>
+	<!-- select all list -->
+	<select id="selectSampleAll" parameterType="int" resultType="com.example.springmall.sample.vo.Sample">
+		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage}
+	</select>
+</mapper>
