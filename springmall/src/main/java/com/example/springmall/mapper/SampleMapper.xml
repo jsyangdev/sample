@@ -6,15 +6,35 @@
 	}
  --> 
 <mapper namespace="com.example.springmall.mapper.SampleMapper">
-	<select id="selectSampleCount" resultType="int">
-		SELECT COUNT(*) FROM sample
+
+	<!-- 6. update sample -->
+	<update id="updateSample" parameterType="com.example.springmall.sample.vo.Sample">
+		UPDATE sample SET sampleId=#{sampleId}, samplePw=#{samplePw} WHERE sampleNo=#{sampleNo}
+	</update>
+	
+	<!-- 5. select one sample -->
+	<select id="selectOne" parameterType="int" resultType="com.example.springmall.sample.vo.Sample">
+		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample WHERE sampleNo=#{sampleNo}
 	</select>
-	<!-- delete sample -->
+	
+	<!-- 4. insert sample -->
+	<insert id="insertSample" parameterType="com.example.springmall.sample.vo.Sample">
+		INSERT INTO sample(sampleId, samplePw) VALUES(#{sampleId}, #{samplePw})
+	</insert>
+
+	<!-- 3. delete sample -->
 	<delete id="deleteSample" parameterType="int">
 		DELETE FROM sample WHERE sampleNo=#{sampleNo}
 	</delete>
-	<!-- select all list -->
+	
+	<!-- 2. select total row count for paging -->
+	<select id="selectSampleCount" resultType="int">
+		SELECT COUNT(*) FROM sample
+	</select>
+	
+	<!-- 1. select all list -->
 	<select id="selectSampleAll" parameterType="int" resultType="com.example.springmall.sample.vo.Sample">
 		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage}
 	</select>
+	
 </mapper>
