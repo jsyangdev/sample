@@ -60,6 +60,18 @@
 		<a href="${pageContext.request.contextPath}/sample/sampleList?currentPage=${lastPage}">마지막>></a>
 	</c:if>
 	<br><br>
+	<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+	<form action="${pageContext.request.contextPath}/sample/sampleList" method="post">
+		<select name="selectValue">
+			<option value="sampleId">sampleId</option>
+		</select>
+		<input type="text" name="sampleId">
+		<button type="submit">
+			검색
+		</button>
+	</form>
+	<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+	<br><br>
 	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
 	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
 	- 현재페이지 : ${currentPage} -

@@ -17,13 +17,47 @@ import com.example.springmall.sample.vo.Sample;
 public class sampleController {
 	@Autowired
 	private SampleService sampleService;
+	
+	// 5. 리스트에서 검색 액션
+	@RequestMapping(value="/sample/sampleList", method=RequestMethod.POST)
+	public String searchSample(Model model, @RequestParam(value="selectValue", required=false) String selectValue, @RequestParam(value="sampleId", required=false) String sampleId) {
+		System.out.println(":::sampleController.searchSample() START:::");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("selectValue", selectValue);
+		map.put("sampleId", sampleId);
+		System.out.println(selectValue+"<---sampleId");
+		System.out.println(sampleId+"<---sampleId");
+		List<Sample> sampleList = sampleService.getSampleOfSearch(map);
+		System.out.println(sampleList+"<--sampleList");
+		model.addAttribute("sampleList", sampleList);
+		
+		
+		
+		
+		
+		
+		
+		System.out.println(":::sampleController.searchSample() END:::");
+		
+		return "/sample/sampleList";
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// 4-1. 수정폼
 	@RequestMapping(value="/sample/modifySample", method=RequestMethod.GET)
 	public String modifySample(Model model, @RequestParam(value="sampleNo", required=false) int sampleNo) {
-		System.out.println(":::SampleService.modifySample() START:::");
+		System.out.println(":::sampleController.modifySample() START:::");
 		Sample sample = sampleService.getSample(sampleNo);
 		model.addAttribute("sample", sample);
-		System.out.println(":::SampleService.modifySample() END:::");
+		System.out.println(":::sampleController.modifySample() END:::");
 		
 		return "/sample/modifySample";		// jquery필요, bootstrap필요, Sample command객체 사용할 것을 염두
 	}
@@ -31,11 +65,11 @@ public class sampleController {
 	// 4-2. 수정 액션
 	@RequestMapping(value="/sample/modifySample", method=RequestMethod.POST)
 	public String modifySample(Sample sample) {
-		System.out.println(":::SampleService.modifySample() START:::");
+		System.out.println(":::sampleController.modifySample() START:::");
 		int updateResult = sampleService.modeifySample(sample);
 		if(updateResult == 1) {System.out.println("수정 성공 !");}
 		else {System.out.println("수정 실패 !");}
-		System.out.println(":::SampleService.modifySample() END:::");
+		System.out.println(":::sampleController.modifySample() END:::");
 		
 		return "redirect:/sample/sampleList";
 	}
@@ -43,8 +77,8 @@ public class sampleController {
 	// 3-1. 입력 폼
 	@RequestMapping(value="/sample/addSample", method=RequestMethod.GET)
 	public String addSample() {
-		System.out.println(":::SampleService.addSample() START:::");
-		System.out.println(":::SampleService.addSample() END:::");
+		System.out.println(":::sampleController.addSample() START:::");
+		System.out.println(":::sampleController.addSample() END:::");
 		
 		return "/sample/addSample";
 	}
@@ -73,7 +107,7 @@ public class sampleController {
 	// 1. 샘플목록
 	@RequestMapping(value="/sample/sampleList", method=RequestMethod.GET)
 	public String sampleList(Model model, @RequestParam(value="currentPage", required=false, defaultValue="1") int currentPage) {	// Model model = new Model();
-		System.out.println(":::SampleService.sampleList() START:::");
+		System.out.println(":::sampleController.sampleList() START:::");
 		int rowsPerPage = 10;
 		int lastPage;	// 마지막 페이지
 		// 넘어오는 currentPage
@@ -86,11 +120,36 @@ public class sampleController {
 		lastPage = totalRowCount/rowsPerPage;
 		if(totalRowCount%rowsPerPage != 0) {lastPage++;}
 		// request객체 대신 model객체에 값 셋팅		( # model의 생명주기=>view까지 )
-		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("totalRowCount", totalRowCount);
 		model.addAttribute("sampleList", sampleList);
 		model.addAttribute("lastPage", lastPage);
-		System.out.println(":::SampleService.sampleList() END:::");
+		System.out.println(":::sampleController.sampleList() END:::");
+		
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		return "/sample/sampleList";
 	}

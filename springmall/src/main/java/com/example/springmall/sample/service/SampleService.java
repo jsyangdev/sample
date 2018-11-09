@@ -17,6 +17,37 @@ public class SampleService {	// Mapper를 주입 받을 거
 	@Autowired
 	private SampleMapper sampleMapper;
 	
+	// 6. 샘플 검색
+	public List<Sample> getSampleOfSearch(HashMap<String, Object> map){
+		System.out.println(":::SampleService.getSampleOfSearch() START:::");
+		List<Sample> searchList = null;
+		String selectValue = (String)map.get("selectValue");
+		String sampleId = (String)map.get("sampleId");
+		System.out.println(selectValue+"<---selectValue");
+		System.out.println(sampleId+"<---sampleId");
+		if(sampleId == null) {
+			
+		} else if(sampleId != null) {
+			
+			searchList = sampleMapper.selectSampleOfSearch(map);
+			
+		}
+		
+		System.out.println(searchList+"<---searchList");
+		
+		
+		
+		
+		
+		
+		
+		
+		System.out.println(":::SampleService.getSampleOfSearch() END:::");
+		
+		return searchList;
+	}
+	
+	
 	// 5. 로그인을 위해 샘플 조회
 	public Sample getSampleForLogin(Sample sample) {
 		System.out.println(":::SampleService.getSampleForLogin() START:::");

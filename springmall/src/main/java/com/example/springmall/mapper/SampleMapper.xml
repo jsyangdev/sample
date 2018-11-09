@@ -7,6 +7,15 @@
  --> 
 <mapper namespace="com.example.springmall.mapper.SampleMapper">
 
+	<!-- 8. select list of search -->
+	<select id="selectSampleOfSearch" parameterType="map" resultType="com.example.springmall.sample.vo.Sample">
+		
+		
+		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample WHERE ${selectValue}=#{sampleId}
+	
+	
+	</select>
+
 	<!-- 7. select one for login -->
 	<select id="selectOneForLogin" parameterType="com.example.springmall.sample.vo.Sample" resultType="com.example.springmall.sample.vo.Sample">
 		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample WHERE sampleId=#{sampleId} AND samplePw=#{samplePw}

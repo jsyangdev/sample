@@ -1,5 +1,6 @@
 package com.example.springmall.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -21,13 +22,18 @@ public interface SampleMapper {		// 추상메서드, 추상클래스, 인터페�
 	// 4. insert
 	int insertSample(Sample sample);
 	
-	// 5. select one(for update)
+	// 5. select one for update
 	Sample selectOne(int sampleNo);
 	
 	// 6. update
 	int updateSample(Sample sample);
 	
-	// 7. select
+	// 7. select one for login
 	Sample selectOneForLogin(Sample sample);
 
+	// 8. select list 
+	List<Sample> selectSampleOfSearch(HashMap<String, Object> map);
+	
+	
+	
 }

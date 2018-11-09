@@ -74,10 +74,10 @@ $(document).ready(function() {
             </div>
         </div>
         <div class="form-group text-center">
-            <button type="submit" id="join-submit" class="btn btn-primary">
+            <button type="button" id="join-submit" class="btn btn-primary">
                 회원가입<i class="fa fa-check spaceLeft"></i>        <!--  <i></i>: 글자를 기울여서 표시하는 태그 -->
             </button>
-            <button type="submit" class="btn btn-warning">
+            <button type="button" class="btn btn-warning">
                 가입취소<i class="fa fa-times spaceLeft"></i>
             </button>
         </div>
