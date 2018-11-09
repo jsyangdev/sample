@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.springmall.paging.Paging;
 import com.example.springmall.sample.service.SampleService;
 import com.example.springmall.sample.vo.Sample;
 

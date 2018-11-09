@@ -26,5 +26,8 @@ public interface SampleMapper {		// 추상메서드, 추상클래스, 인터페�
 	
 	// 6. update
 	int updateSample(Sample sample);
+	
+	// 7. select
+	Sample selectOneForLogin(Sample sample);
 
 }

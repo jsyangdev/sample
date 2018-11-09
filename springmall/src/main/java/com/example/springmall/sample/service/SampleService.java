@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.springmall.mapper.SampleMapper;
-import com.example.springmall.paging.Paging;
 import com.example.springmall.sample.vo.Sample;
 
 @Service
@@ -17,6 +16,16 @@ import com.example.springmall.sample.vo.Sample;
 public class SampleService {	// Mapper를 주입 받을 거
 	@Autowired
 	private SampleMapper sampleMapper;
+	
+	// 5. 로그인을 위해 샘플 조회
+	public Sample getSampleForLogin(Sample sample) {
+		System.out.println(":::SampleService.getSampleForLogin() START:::");
+		Sample loginSample = sampleMapper.selectOneForLogin(sample);
+		System.out.println(loginSample+"<---loginResult");
+		System.out.println(":::SampleService.getSampleForLogin() END:::");
+		
+		return loginSample;
+	}
 	
 	// 4-1. 샘플 수정을 위해 특정 샘플 조회
 	public Sample getSample(int sampleNo) {
