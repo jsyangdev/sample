@@ -7,7 +7,26 @@
 <!-- BootStrap CDM -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <!-- jQuery CDM -->
-<script language="javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#inputPassword').focus();
+    
+    $('#inputPassword').blur(function(){
+        if($('#inputPassword').val().length < 4){
+            $('#pwHelper').text('비밀번호를 4자 이상 입력하시오.');
+            $('#inputPassword').focus();
+        } else {
+            $('#pwHelper').text('');
+        }
+    });
+    $('#join-submit').click(function(){
+        if($('#inputPassword').val().length > 3){
+            $('#form').submit();
+        }    
+    });
+})
+</script>
 </head>
 <body>
 	<h1>수정화면</h1>

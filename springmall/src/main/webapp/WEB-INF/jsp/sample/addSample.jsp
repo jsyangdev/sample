@@ -7,31 +7,41 @@
 <!-- BootStrap CDM -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <!-- jQuery CDM -->
-<script type="text/javascript" src="<c:url value='/js/jquery.1.9.1.min.js'/>"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-    $('#join-submit').click(function(){
-    	
-        if ($('#inputId').val()=="") {
-            
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#inputId').focus();    
+    
+    $('#inputId').blur(function() {
+        if($('#inputId').val().length < 4) {
+            $('#idHelper').text('아이디를 4자 이상 입력하시오.');
             $('#inputId').focus();
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
+        } else {
+            $('#idHelper').text('');
+        }
     });
-    
-    
-    
-    
-    
+    $('#inputPassword').blur(function(){
+        if($('#inputPassword').val().length < 4){
+            $('#pwHelper').text('비밀번호를 4자 이상 입력하시오.');
+            $('#inputPassword').focus();
+        } else {
+            $('#pwHelper').text('');
+        }
+    });
+    $('#inputPasswordCheck').blur(function(){
+        if($('#inputPasswordCheck').val() == $('#inputPassword').val()){
+            $('#pwCheckHelper').text('');
+        } else {
+            $('#pwCheckHelper').text('비밀번호가 일치하지 않습니다.');
+            $('#inputPasswordCheck').focus();
+        }        
+    });
+    $('#join-submit').click(function(){
+        if(($('#inputId').val().length > 3) && ($('#inputPassword').val().length > 3) && ($('#inputPasswordCheck').val() == $('#inputPassword').val())){
+            $('#form').submit();
+        }    
+    });
+ 
 });
 </script>
 </head>
