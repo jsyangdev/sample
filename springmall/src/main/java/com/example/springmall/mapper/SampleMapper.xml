@@ -32,6 +32,10 @@
 	</select>
 	
 	<!-- 4. insert sample -->
+	<!-- 
+		1. insert된 행의 sampleNo값을 가져오게 된다. sampleNo값은 DataClass에 선언되어있는 sampleNo 필드 안으로 값이 저절로 들어간다.
+		2. insert 구문의 속성중 하나인 useGeneratedKeys를 true로 설정하여 key를 가지고 올 수도 있다.
+	 -->
 	<insert id="insertSample" parameterType="com.example.springmall.sample.vo.Sample">
 	    <selectKey resultType="int" keyProperty="sampleNo" order="AFTER">
             SELECT LAST_INSERT_ID()

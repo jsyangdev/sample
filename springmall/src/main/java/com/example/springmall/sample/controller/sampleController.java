@@ -73,6 +73,7 @@ public class sampleController {
 	// 3-2. 입력 액션
 	@RequestMapping(value="/sample/addSample", method=RequestMethod.POST)
 	public String addSample(SampleRequest sampleRequest) {
+		System.out.println(":::sampleController.addSample() START:::");
 		// Sample 친구들 존재할 수 있다. base: Sample 테이블
 		// command객체의 멤버변수  == input 태그의 name속성  --> 표준 setter를 호출
 		System.out.println("sampleRequest.multipartFile: "+sampleRequest.getMultipartFile());
@@ -80,6 +81,7 @@ public class sampleController {
 		// view 없으니까 바로 리턴
 		if(row == 1) {System.out.println("입력 성공 !");}
 		else {System.out.println("입력 실패 !");}
+		System.out.println(":::sampleController.addSample() END:::");
 
 		return "redirect:/sample/sampleList";
 	}

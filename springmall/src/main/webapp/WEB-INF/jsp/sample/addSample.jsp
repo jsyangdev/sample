@@ -47,6 +47,9 @@ $(document).ready(function() {
 </head>
 <body>
     <h1>회원가입</h1><br><br>
+    <!--
+       	 파일업로드를 위해선 반드시 method="post" enctype="Multipart/form-data"
+     -->
     <form action="${PageContext.request.contextPath}/sample/addSample" id="form" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="inputName">아이디</label>

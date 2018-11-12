@@ -7,8 +7,10 @@
  --> 
 <mapper namespace="com.example.springmall.mapper.SampleFileMapper">
 	
-	<insert id="insertSampleFile" parameterType="com.example.springmall.sample.vo.SampleRequest">
-		INSERT INTO samplefile(sample_no, samplefile_path, samplefile_name, samplefile_ext, samplefile_type, samplefile_size, samplefile_date) VALUES (#{sampleNo},#{samplefilePath},#{samplefileName},#{samplefileExt},#{samplefileType},#{samplefileSize},NOW())
+	<insert id="insertSampleFile" parameterType="com.example.springmall.sample.vo.SampleFile">
+		INSERT 
+		INTO samplefile(sample_no, samplefile_path, samplefile_name, samplefile_ext, samplefile_type, samplefile_size, samplefile_date) 
+		VALUES (#{sampleNo},#{samplefilePath},#{samplefileName},#{samplefileExt},#{samplefileType},#{samplefileSize},NOW())
 	</insert>
 
 </mapper>

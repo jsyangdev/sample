@@ -109,6 +109,26 @@ public class SampleService {	// Mapper를 주입 받을 거
 		String path = "c:\\uploads";	// 근데 이렇게 적으면 클라우드 같은데로 갔을 때 c에 uploads가 없을 수도 있잖아
 		sampleFile.setSamplefilePath(path);
 		
+		request.
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// (4) 확장자
 		System.out.println(multipartFile.getOriginalFilename()+"<---multipartFile.getOriginalFilename() addSample");
 		String originalFileName = multipartFile.getOriginalFilename();
@@ -119,8 +139,13 @@ public class SampleService {	// Mapper를 주입 받을 거
 		System.out.println(ext+"<---ext");
 		sampleFile.setSamplefileExt(ext);
 		
-		// (5) 이름
-		String fileName = UUID.randomUUID().toString();	// 랜덤 글자 막 만들어줌. 알아서 잘라서 사용하면됨
+		/* (5) 이름
+		 * UUID 클래스를 사용해서 유일한 식별자를 생성
+		 * - java.util.UUID 클래스를 임포트
+		 * - UUID 클래스의 randomUUID() 메소드를 사용해서 유일한 식별자를 생성
+		 * - 반환 되는 객체가 UUID 객체이므로 문자열 표현을 얻기 위해 toString() 메소드로 출력
+		 */
+		String fileName = UUID.randomUUID().toString();
 		sampleFile.setSamplefileName(fileName);
 
 		// (6) 타입
@@ -130,14 +155,14 @@ public class SampleService {	// Mapper를 주입 받을 거
 		sampleFile.setSamplefileSize(multipartFile.getSize());
 		
 		// samplefile 테이블에 값들 insert 시키는 메서드 호출하기
-		sampleFileMapper.insertSampleFile(sampleFile);
+		int row = sampleFileMapper.insertSampleFile(sampleFile);
 		
 		// ★ multipartFile파일을 하드디스크에 복사 ! ★
-		// 내가 원하는 이름의 빈 파일을 하나 만들자 !
+		// 1. 내가 원하는 이름의 빈 파일을 하나 만들자 !
 		File f = new File(path+"\\"+fileName+"."+ext);
 
 		try {	// try, catch 필요 (예외가 날 수도 있으니까, 예를 들면 하드디스크 용량이 부족하다던가)
-			multipartFile.transferTo(f);	// 그리고 multipartFile파일을 빈 파일로 복사하자 !
+			multipartFile.transferTo(f);	// 2. 그리고 multipartFile파일을 빈 파일로 복사하자 !
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -147,7 +172,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		// 1+2 => @Transactional
 		System.out.println(":::SampleService.addSample() END:::");
 		
-		return 0;
+		return row;
 	}	
 	
 	// 2. 삭제

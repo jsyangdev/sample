@@ -28,4 +28,10 @@ public class SampleRequest {
 		this.multipartFile = multipartFile;
 	}
 	
+	@Override
+	public String toString() {
+		return "SampleRequest [sampleId=" + sampleId + ", samplePw=" + samplePw + ", multipartFile=" + multipartFile
+				+ "]";
+	}
+	
 }
