@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	public OTHERS_CLASS implements com.example.springmall.mapper.SampleMapper {
+	
+	}
+ --> 
+<mapper namespace="com.example.springmall.mapper.SampleFileMapper">
+	
+	<insert id="insertSampleFile" parameterType="com.example.springmall.sample.vo.SampleRequest">
+		INSERT INTO samplefile(sample_no, samplefile_path, samplefile_name, samplefile_ext, samplefile_type, samplefile_size, samplefile_date) VALUES (#{sampleNo},#{samplefilePath},#{samplefileName},#{samplefileExt},#{samplefileType},#{samplefileSize},NOW())
+	</insert>
+
+</mapper>

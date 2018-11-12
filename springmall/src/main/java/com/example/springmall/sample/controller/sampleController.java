@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.springmall.sample.service.SampleService;
 import com.example.springmall.sample.vo.Sample;
+import com.example.springmall.sample.vo.SampleRequest;
 
 @Controller
 public class sampleController {
@@ -30,26 +31,12 @@ public class sampleController {
 		List<Sample> sampleList = sampleService.getSampleOfSearch(map);
 		System.out.println(sampleList+"<--sampleList");
 		model.addAttribute("sampleList", sampleList);
-		
-		
-		
-		
-		
-		
-		
 		System.out.println(":::sampleController.searchSample() END:::");
 		
 		return "/sample/sampleList";
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	// 4-1. 수정폼
 	@RequestMapping(value="/sample/modifySample", method=RequestMethod.GET)
@@ -85,10 +72,11 @@ public class sampleController {
 	
 	// 3-2. 입력 액션
 	@RequestMapping(value="/sample/addSample", method=RequestMethod.POST)
-	public String addSample(Sample sample) {
+	public String addSample(SampleRequest sampleRequest) {
 		// Sample 친구들 존재할 수 있다. base: Sample 테이블
 		// command객체의 멤버변수  == input 태그의 name속성  --> 표준 setter를 호출
-		int row = sampleService.addSample(sample);
+		System.out.println("sampleRequest.multipartFile: "+sampleRequest.getMultipartFile());
+		int row = sampleService.addSample(sampleRequest);
 		// view 없으니까 바로 리턴
 		if(row == 1) {System.out.println("입력 성공 !");}
 		else {System.out.println("입력 실패 !");}
@@ -106,50 +94,45 @@ public class sampleController {
 	
 	// 1. 샘플목록
 	@RequestMapping(value="/sample/sampleList", method=RequestMethod.GET)
-	public String sampleList(Model model, @RequestParam(value="currentPage", required=false, defaultValue="1") int currentPage) {	// Model model = new Model();
+	public String sampleList(Model model, @RequestParam(value="currentPage", required=false, defaultValue="1") int currentPage,
+			@RequestParam(value="selectValue", required=false) String selectValue, @RequestParam(value="sampleId", required=false) String sampleId) {	// Model model = new Model();
 		System.out.println(":::sampleController.sampleList() START:::");
+		List<Sample> sampleList = null;
 		int rowsPerPage = 10;
 		int lastPage;	// 마지막 페이지
 		// 넘어오는 currentPage
 		System.out.println(currentPage+"<---currentPage");
+		
+		// ★넘어오는 검색폼의 값들 출력 ★
+		System.out.println(selectValue+"<---selectValue");
+		System.out.println(sampleId+"<---sampleId");
+		
 		// 총 행 수 구하는 메서드 호출
 		int totalRowCount = sampleService.getSampleTotalRowCount();
 		// 리스트 가지고 오는 메서드 호출
-		List<Sample> sampleList = sampleService.getSampleAll(currentPage, rowsPerPage);	
+		if(selectValue == null) {
+			sampleList = sampleService.getSampleAll(currentPage, rowsPerPage);	
+			
+		} else if(sampleId != null) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("selectValue", selectValue);
+			map.put("sampleId", sampleId);
+			map.put("currentPage", currentPage);
+			map.put("rowsPerPage", rowsPerPage);
+			System.out.println(selectValue+"<---sampleId");
+			System.out.println(sampleId+"<---sampleId");
+			sampleList = sampleService.getSampleOfSearch(map);
+			
+		}
 		// 마지막 페이지 구하기
 		lastPage = totalRowCount/rowsPerPage;
 		if(totalRowCount%rowsPerPage != 0) {lastPage++;}
 		// request객체 대신 model객체에 값 셋팅		( # model의 생명주기=>view까지 )
+		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("totalRowCount", totalRowCount);
 		model.addAttribute("sampleList", sampleList);
 		model.addAttribute("lastPage", lastPage);
 		System.out.println(":::sampleController.sampleList() END:::");
-		
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		return "/sample/sampleList";
 	}

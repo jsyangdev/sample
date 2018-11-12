@@ -11,7 +11,7 @@
 	<select id="selectSampleOfSearch" parameterType="map" resultType="com.example.springmall.sample.vo.Sample">
 		
 		
-		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample WHERE ${selectValue}=#{sampleId}
+		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample WHERE ${selectValue}=#{sampleId} ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage}
 	
 	
 	</select>
@@ -33,6 +33,9 @@
 	
 	<!-- 4. insert sample -->
 	<insert id="insertSample" parameterType="com.example.springmall.sample.vo.Sample">
+	    <selectKey resultType="int" keyProperty="sampleNo" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
 		INSERT INTO sample(sampleId, samplePw) VALUES(#{sampleId}, #{samplePw})
 	</insert>
 

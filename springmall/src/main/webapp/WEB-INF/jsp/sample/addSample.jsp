@@ -47,7 +47,7 @@ $(document).ready(function() {
 </head>
 <body>
     <h1>회원가입</h1><br><br>
-    <form action="${PageContext.request.contextPath}/sample/addSample" id="form" method="post">
+    <form action="${PageContext.request.contextPath}/sample/addSample" id="form" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="inputName">아이디</label>
             <input type="text" class="form-control" id="inputId" name="sampleId" placeholder="이름을 입력해 주세요"><br>
@@ -64,13 +64,18 @@ $(document).ready(function() {
             <span id="pwCheckHelper" class="text-danger"></span>
         </div>
         <div class="form-group">
+            <label for="inputFile">파일 업로드</label>
+            <input type="file" class="form-control" id="inputFile" name="multipartFile">
+            <span id="fileCheckHelper" class="text-danger"></span>
+        </div>
+        <div class="form-group">
             <label>약관 동의</label>
             <div data-toggle="buttons">
                 <label class="btn btn-primary active">
                     <span class="fa fa-check"></span>
                     <input id="agree" type="checkbox" autocomplete="off" checked>
                 </label>
-                이용약관에 동의합니다.
+                	이용약관에 동의합니다.
             </div>
         </div>
         <div class="form-group text-center">

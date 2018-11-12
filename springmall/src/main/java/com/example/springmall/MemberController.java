@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MemberController {
 	@Autowired
 	private MemberService memberService;
+	
 	@RequestMapping(value="/countMember", method=RequestMethod.GET)
 	public String countMember(Model model) {	// 뷰이름과 모델 만들어져야..
 		int count = memberService.getCountMember();

@@ -4,6 +4,8 @@ public class Sample {
 	private int sampleNo;
 	private String sampleId;
 	private String samplePw;
+	// private SampleFile sampleFile;
+	
 	// 디폴트 생성자
 	public Sample() {
 		super();
@@ -33,6 +35,13 @@ public class Sample {
 	public void setSamplePw(String samplePw) {
 		this.samplePw = samplePw;
 	}
+/*	public SampleFile getsampleFile() {
+		return sampleFile;
+	}
+	public void setsampleFile(SampleFile sampleFile) {
+		this.sampleFile = sampleFile;
+	}*/
+	
 	
 	@Override
 	public String toString() {

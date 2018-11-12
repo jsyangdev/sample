@@ -1,21 +1,30 @@
 package com.example.springmall.sample.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.springmall.mapper.SampleFileMapper;
 import com.example.springmall.mapper.SampleMapper;
 import com.example.springmall.sample.vo.Sample;
+import com.example.springmall.sample.vo.SampleFile;
+import com.example.springmall.sample.vo.SampleRequest;
 
 @Service
 @Transactional
 public class SampleService {	// Mapper를 주입 받을 거
 	@Autowired
 	private SampleMapper sampleMapper;
+	@Autowired
+	private SampleFileMapper sampleFileMapper;
 	
 	// 6. 샘플 검색
 	public List<Sample> getSampleOfSearch(HashMap<String, Object> map){
@@ -23,25 +32,18 @@ public class SampleService {	// Mapper를 주입 받을 거
 		List<Sample> searchList = null;
 		String selectValue = (String)map.get("selectValue");
 		String sampleId = (String)map.get("sampleId");
+		int currentPage = (Integer)map.get("currentPage");
+		int rowsPerPage = (Integer)map.get("rowsPerPage");
 		System.out.println(selectValue+"<---selectValue");
 		System.out.println(sampleId+"<---sampleId");
-		if(sampleId == null) {
-			
-		} else if(sampleId != null) {
-			
-			searchList = sampleMapper.selectSampleOfSearch(map);
-			
-		}
-		
+		// :::페이징 관련 코드:::
+		int startRow;		// SELECT쿼리 LIMIT의 첫번째 ?
+		startRow = (currentPage-1)*rowsPerPage;
+		System.out.println(startRow+"<--startRow");
+		map.put("startRow", startRow);
+		// :::END:::
+		searchList = sampleMapper.selectSampleOfSearch(map);
 		System.out.println(searchList+"<---searchList");
-		
-		
-		
-		
-		
-		
-		
-		
 		System.out.println(":::SampleService.getSampleOfSearch() END:::");
 		
 		return searchList;
@@ -80,14 +82,72 @@ public class SampleService {	// Mapper를 주입 받을 거
 	}
 	
 	// 3. 입력 액션
-	public int addSample(Sample sample) {
-		System.out.println(":::SampleService.getSampleTotalRowCount() START:::");
-		int insertResult = 0;
-		insertResult = sampleMapper.insertSample(sample);
-		System.out.println(insertResult+"<---insertResult");
-		System.out.println(":::SampleService.getSampleTotalRowCount() END:::");
+	public int addSample(SampleRequest sampleRequest) {
+		/*
+		 * SampleRequest  ---> Sample , SampleFile (분리시킨다)
+		 * 1. multipartfile 파일데이터  -> 저장
+		 * 2. multipartfile 정보 -> 새로운 정보 추가 -> SampleFile
+		 */
+		System.out.println(":::SampleService.addSample() START:::");
+		// 1.
+		Sample sample = new Sample();
+		sample.setSampleId(sampleRequest.getSampleId());
+		sample.setSamplePw(sampleRequest.getSamplePw());
+		sampleMapper.insertSample(sample);	// auto increment에 의해서 sampleNo가 만들어 졌을 것이다. 이 메서드 실행 후에 sample에 아디와 비번이 채워져있음.
+		// System.out.println(sample.getSampleNo()+"<----sample.getSampleNo()");	// sampleNo(기본키) getting
 		
-		return insertResult;
+		// 2.
+		SampleFile sampleFile = new SampleFile();
+		MultipartFile multipartFile = sampleRequest.getMultipartFile();	// 화면에서 받아온 multifile을 MultipartFile인터페이스 데이터 타입으로 변수 선언하여 저장
+		// (1) SampleFileNo : Auto Increment로 해결
+		
+		// (2) SampleNo
+		sampleFile.setSampleNo(sample.getSampleNo());	// insertSample(sample) 후에 pk 값이 sample에 채워진다.
+		System.out.println(sample.getSampleNo()+"<----sample.getSampleNo()");	// sampleNo(기본키) getting
+		
+		// (3) samplefilePath (홈디렉토리 쓰려면 알아서 고민혀) - 복잡한 루틴을 통해서 내가 원하는 !!! request.realPath ? 
+		String path = "c:\\uploads";	// 근데 이렇게 적으면 클라우드 같은데로 갔을 때 c에 uploads가 없을 수도 있잖아
+		sampleFile.setSamplefilePath(path);
+		
+		// (4) 확장자
+		System.out.println(multipartFile.getOriginalFilename()+"<---multipartFile.getOriginalFilename() addSample");
+		String originalFileName = multipartFile.getOriginalFilename();
+		// originalFileName = 이름.확장자
+		int pos = originalFileName.lastIndexOf(".");
+		System.out.println(pos+"<---pos");
+		String ext = originalFileName.substring(pos+1);	// 조작해서 확장자 만들면 된다.
+		System.out.println(ext+"<---ext");
+		sampleFile.setSamplefileExt(ext);
+		
+		// (5) 이름
+		String fileName = UUID.randomUUID().toString();	// 랜덤 글자 막 만들어줌. 알아서 잘라서 사용하면됨
+		sampleFile.setSamplefileName(fileName);
+
+		// (6) 타입
+		sampleFile.setSamplefileType(multipartFile.getContentType());
+		
+		// (7) 크기
+		sampleFile.setSamplefileSize(multipartFile.getSize());
+		
+		// samplefile 테이블에 값들 insert 시키는 메서드 호출하기
+		sampleFileMapper.insertSampleFile(sampleFile);
+		
+		// ★ multipartFile파일을 하드디스크에 복사 ! ★
+		// 내가 원하는 이름의 빈 파일을 하나 만들자 !
+		File f = new File(path+"\\"+fileName+"."+ext);
+
+		try {	// try, catch 필요 (예외가 날 수도 있으니까, 예를 들면 하드디스크 용량이 부족하다던가)
+			multipartFile.transferTo(f);	// 그리고 multipartFile파일을 빈 파일로 복사하자 !
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// 1+2 => @Transactional
+		System.out.println(":::SampleService.addSample() END:::");
+		
+		return 0;
 	}	
 	
 	// 2. 삭제
