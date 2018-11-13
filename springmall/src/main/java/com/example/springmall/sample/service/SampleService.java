@@ -7,10 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 
 import com.example.springmall.mapper.SampleFileMapper;
 import com.example.springmall.mapper.SampleMapper;
@@ -82,7 +86,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 	}
 	
 	// 3. 입력 액션
-	public int addSample(SampleRequest sampleRequest) {
+	public int addSample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		/*
 		 * SampleRequest  ---> Sample , SampleFile (분리시킨다)
 		 * 1. multipartfile 파일데이터  -> 저장
@@ -105,30 +109,21 @@ public class SampleService {	// Mapper를 주입 받을 거
 		sampleFile.setSampleNo(sample.getSampleNo());	// insertSample(sample) 후에 pk 값이 sample에 채워진다.
 		System.out.println(sample.getSampleNo()+"<----sample.getSampleNo()");	// sampleNo(기본키) getting
 		
-		// (3) samplefilePath (홈디렉토리 쓰려면 알아서 고민혀) - 복잡한 루틴을 통해서 내가 원하는 !!! request.realPath ? 
-		String path = "c:\\uploads";	// 근데 이렇게 적으면 클라우드 같은데로 갔을 때 c에 uploads가 없을 수도 있잖아
-		sampleFile.setSamplefilePath(path);
+		/* (3) samplefilePath
+		 *   홈디렉토리 : 웹서버가 기본적으로 찾는 디렉토리
+		 *   홈디렉토리에 저장 - 복잡한 루틴을 통해서 내가 원하는 위치에!
+		*/
+		/* String realPath = "c:\\uploads";	// 근데 이렇게 적으면 클라우드 같은데로 갔을 때 c에 uploads가 없을 수도 있잖아
+		sampleFile.setSamplefilePath(realPath);	*/
 		
-		request.
-		
-		
-		
-		
-		
-		
-		
-		
+		String realPath = request.getSession().getServletContext().getRealPath("/upload");
+		System.out.println(realPath+"<---realPath");
+		sampleFile.setSamplefilePath(realPath);
+
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		// (4) 확장자
 		System.out.println(multipartFile.getOriginalFilename()+"<---multipartFile.getOriginalFilename() addSample");
 		String originalFileName = multipartFile.getOriginalFilename();
@@ -159,10 +154,11 @@ public class SampleService {	// Mapper를 주입 받을 거
 		
 		// ★ multipartFile파일을 하드디스크에 복사 ! ★
 		// 1. 내가 원하는 이름의 빈 파일을 하나 만들자 !
-		File f = new File(path+"\\"+fileName+"."+ext);
+		File f = new File(realPath+"\\"+fileName+"."+ext);
+		System.out.println(f+"<---f");
 
 		try {	// try, catch 필요 (예외가 날 수도 있으니까, 예를 들면 하드디스크 용량이 부족하다던가)
-			multipartFile.transferTo(f);	// 2. 그리고 multipartFile파일을 빈 파일로 복사하자 !
+			multipartFile.transferTo(f);// 2. 그리고 multipartFile파일을 빈 파일로 복사하자 !
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
