@@ -8,12 +8,14 @@
 <mapper namespace="com.example.springmall.mapper.SampleMapper">
 
 	<!-- 8. select list of search -->
-	<select id="selectSampleOfSearch" parameterType="map" resultType="com.example.springmall.sample.vo.Sample">
-		
-		
-		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample WHERE ${selectValue}=#{sampleId} ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage}
-	
-	
+	<select id="selectSampleOfSearch" parameterType="map" resultType="com.example.springmall.sample.vo.SampleAndSampleFile">	
+		SELECT s.sampleNo as sampleNo, s.sampleId as sampleId, s.samplePw as samplePw, CONCAT(sf.samplefile_name,'.',sf.samplefile_ext) as sampleFile
+		FROM sample s
+		INNER JOIN samplefile sf
+		ON s.sampleNo = sf.sample_no
+		WHERE ${selectValue}=#{sampleId} 
+		ORDER BY sampleNo 
+		LIMIT #{startRow}, #{rowsPerPage}
 	</select>
 
 	<!-- 7. select one for login -->
@@ -54,8 +56,9 @@
 	</select>
 	
 	<!-- 1. select all list -->
-	<select id="selectSampleAll" parameterType="int" resultType="Map">
-		SELECT s.sampleNo as sampleNo, s.sampleId as sampleId, s.samplePw as samplePw, sf.samplefile_name as samplefile
+	<select id="selectSampleAll" parameterType="int" resultType="com.example.springmall.sample.vo.SampleAndSampleFile">
+		<!-- CONCAT: mysql 내 문자열 합쳐주는 함수 -->
+ 		SELECT s.sampleNo as sampleNo, s.sampleId as sampleId, s.samplePw as samplePw, CONCAT(sf.samplefile_name,'.',sf.samplefile_ext) as sampleFile
 		FROM sample s
 		INNER JOIN samplefile sf
 		ON s.sampleNo = sf.sample_no

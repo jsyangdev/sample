@@ -19,6 +19,7 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 import com.example.springmall.mapper.SampleFileMapper;
 import com.example.springmall.mapper.SampleMapper;
 import com.example.springmall.sample.vo.Sample;
+import com.example.springmall.sample.vo.SampleAndSampleFile;
 import com.example.springmall.sample.vo.SampleFile;
 import com.example.springmall.sample.vo.SampleRequest;
 
@@ -31,9 +32,9 @@ public class SampleService {	// Mapper를 주입 받을 거
 	private SampleFileMapper sampleFileMapper;
 	
 	// 6. 샘플 검색
-	public List<Sample> getSampleOfSearch(HashMap<String, Object> map){
+/*	public List<SampleAndSampleFile> getSampleOfSearch(HashMap<String, Object> map){
 		System.out.println(":::SampleService.getSampleOfSearch() START:::");
-		List<Sample> searchList = null;
+		List<SampleAndSampleFile> searchList = null;
 		String selectValue = (String)map.get("selectValue");
 		String sampleId = (String)map.get("sampleId");
 		int currentPage = (Integer)map.get("currentPage");
@@ -51,7 +52,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		System.out.println(":::SampleService.getSampleOfSearch() END:::");
 		
 		return searchList;
-	}
+	}*/
 	
 	
 	// 5. 로그인을 위해 샘플 조회
@@ -88,7 +89,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 	// 3. 입력 액션
 	public int addSample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		/*
-			파일 업로드 입력 액션 설계
+			파일 업로드가 포함된 입력 액션 설계
 		 	SampleRequest  ---> Sample , SampleFile (분리시킨다)
 		 	1. multipartfile 파일데이터  -> 저장
 		 	2. multipartfile 정보 -> 새로운 정보 추가 -> SampleFile
@@ -100,7 +101,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		sample.setSampleId(sampleRequest.getSampleId());
 		sample.setSamplePw(sampleRequest.getSamplePw());
 		sampleMapper.insertSample(sample);	// auto increment에 의해서 sampleNo가 만들어졌을 것이다. 이 메서드 실행 후에 sample에 아디와 비번이 채워져있음.
-		// System.out.println(sample.getSampleNo()+"<----sample.getSampleNo()");	sampleNo(기본키) getting
+		// System.out.println(sample.getSampleNo()+"<---sample.getSampleNo()");	sampleNo 겟팅
 		
 		// 2.
 		SampleFile sampleFile = new SampleFile();
@@ -108,7 +109,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		// (1) SampleFileNo : Auto Increment로 해결
 		// (2) SampleNo
 		sampleFile.setSampleNo(sample.getSampleNo());	// insertSample(sample) 후에 pk 값이 sample에 채워진다.
-		System.out.println(sample.getSampleNo()+"<----sample.getSampleNo()");	// sampleNo(기본키) getting
+		System.out.println(sample.getSampleNo()+"<---sample.getSampleNo()");	// sampleNo(기본키) getting
 		
 		/* 
 			(3) samplefilePath
@@ -166,7 +167,6 @@ public class SampleService {	// Mapper를 주입 받을 거
 		 */
 		String fileName = UUID.randomUUID().toString();
 		sampleFile.setSamplefileName(fileName);
-		sample.setSampleFile(sampleFile);
 
 		// (6) 타입
 		sampleFile.setSamplefileType(multipartFile.getContentType());
@@ -211,26 +211,38 @@ public class SampleService {	// Mapper를 주입 받을 거
 		totalRowCount = sampleMapper.selectSampleCount();
 		System.out.println(totalRowCount+"<---totalRowCount");
 		System.out.println(":::SampleService.getSampleTotalRowCount() END:::");
+		
 		return totalRowCount;
 	}
 	
-	public List<HashMap<String, Object>> getSampleAll(int currentPage, int rowsPerPage){
+	public List<SampleAndSampleFile> getSampleAll(HashMap<String, Object> map){
 		System.out.println(":::SampleService.getSampleAll() START:::");
+		List<SampleAndSampleFile> selectList = null;
+		int currentPage = (int) map.get("currentPage");
+		int rowsPerPage = (int) map.get("rowsPerPage");
+		String selectvalue = (String) map.get("selectValue");
+		String sampleId = (String) map.get("sampleId");
 		System.out.println(currentPage+"<---currentPage");
 		System.out.println(rowsPerPage+"<---rowsPerPage");
+		System.out.println(selectvalue+"<---selectvalue");
+		System.out.println(sampleId+"<---sampleId");
 		// ::: 페이징 관련 코드 :::
 		int startRow;		// SELECT쿼리 LIMIT의 첫번째 ?
 		startRow = (currentPage-1)*rowsPerPage;
+		map.put("startRow", startRow);
 		System.out.println(startRow+"<--startRow");
-		// :::END:::
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put();
-		
-		List<Sample> sampleList = new ArrayList<Sample>();
-		sampleList = sampleMapper.selectSampleAll(startRow, rowsPerPage);
+		// :::END:::		
+		if(selectvalue == null) {
+			System.out.println("전체 리스트 출력 !");
+			selectList = sampleMapper.selectSampleAll(startRow, rowsPerPage);
+		} else if(sampleId != null) {
+			System.out.println("검색된 리스트 출력 !");
+			selectList = sampleMapper.selectSampleOfSearch(map);
+		}
+		System.out.println(selectList+"<---selectList");
 		System.out.println(":::SampleService.getSampleAll() END:::");
 		
-		return sampleList;
+		return selectList;
 	}
 
 }
