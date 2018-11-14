@@ -18,6 +18,7 @@
 				<td>SAMPLE NO</td>
 				<td>SAMPLE ID</td>
 				<td>SAMPLE PW</td>
+				<td>SAMPLE File</td>
 				<td>DELETE</td>
 				<td>UPDATE</td>
 			</tr>
@@ -29,6 +30,7 @@
 					<td>${sample.sampleNo}</td>
 					<td>${sample.sampleId}</td>
 					<td>${sample.samplePw}</td>
+					<td>${sample.samplePw}</td>	<!-- 파일 업로드 부분. 누르면 다운로드 되도록 만들기 -->
 					<td><a href="/sample/removeSample?sampleNo=${sample.sampleNo}">DELETE</a></td>
 					<td><a href="/sample/modifySample?sampleNo=${sample.sampleNo}">UPDATE</a></td>
 				</tr>

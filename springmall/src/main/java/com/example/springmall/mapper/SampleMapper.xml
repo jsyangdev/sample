@@ -54,8 +54,14 @@
 	</select>
 	
 	<!-- 1. select all list -->
-	<select id="selectSampleAll" parameterType="int" resultType="com.example.springmall.sample.vo.Sample">
-		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage}
+	<select id="selectSampleAll" parameterType="int" resultType="Map">
+		SELECT s.sampleNo as sampleNo, s.sampleId as sampleId, s.samplePw as samplePw, sf.samplefile_name as samplefile
+		FROM sample s
+		INNER JOIN samplefile sf
+		ON s.sampleNo = sf.sample_no
+		ORDER BY sampleNo
+		LIMIT #{startRow}, #{rowsPerPage}
+		<!-- SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage} -->
 	</select>
 	
 </mapper>

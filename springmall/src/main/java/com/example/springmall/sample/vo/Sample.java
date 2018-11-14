@@ -4,7 +4,7 @@ public class Sample {
 	private int sampleNo;
 	private String sampleId;
 	private String samplePw;
-	private SampleFile sampleFile;
+	// private SampleFile sampleFile;
 	
 	// 디폴트 생성자
 	public Sample() {
@@ -35,17 +35,16 @@ public class Sample {
 	public void setSamplePw(String samplePw) {
 		this.samplePw = samplePw;
 	}
-	public SampleFile getSampleFile() {
+/*	public SampleFile getSampleFile() {
 		return sampleFile;
 	}
 	public void setSampleFile(SampleFile sampleFile) {
 		this.sampleFile = sampleFile;
-	}
+	}*/
 	
 	@Override
 	public String toString() {
-		return "Sample [sampleNo=" + sampleNo + ", sampleId=" + sampleId + ", samplePw=" + samplePw + ", sampleFile="
-				+ sampleFile + "]";
+		return "Sample [sampleNo=" + sampleNo + ", sampleId=" + sampleId + ", samplePw=" + samplePw + "]";
 	}
 
 }

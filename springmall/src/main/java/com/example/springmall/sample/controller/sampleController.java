@@ -76,7 +76,7 @@ public class sampleController {
 	public String addSample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		System.out.println(":::sampleController.addSample() START:::");
 		// Sample 친구들 존재할 수 있다. base: Sample 테이블
-		// command객체의 멤버변수  == input 태그의 name속성  --> 표준 setter를 호출
+		// command객체의 멤버변수  == input 태그의 name속성  ---> 표준 setter를 호출
 		System.out.println("sampleRequest.multipartFile: "+sampleRequest.getMultipartFile());
 		int row = sampleService.addSample(sampleRequest, request);
 		// view 없으니까 바로 리턴
@@ -115,7 +115,6 @@ public class sampleController {
 		// 리스트 가지고 오는 메서드 호출
 		if(selectValue == null) {
 			sampleList = sampleService.getSampleAll(currentPage, rowsPerPage);	
-			
 		} else if(sampleId != null) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("selectValue", selectValue);
