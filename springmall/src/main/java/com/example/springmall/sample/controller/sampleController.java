@@ -21,6 +21,18 @@ public class sampleController {
 	@Autowired
 	private SampleService sampleService;
 	
+	// 5. 업로드 된 파일 삭제
+	
+	public String deleteUploadedFile() {
+		
+		
+		
+		return null;
+	}
+	
+	
+	
+	
 	// 5. 리스트에서 검색 액션
 /*	@RequestMapping(value="/sample/sampleList", method=RequestMethod.POST)
 	public String searchSample(Model model, @RequestParam(value="selectValue", required=false) String selectValue, @RequestParam(value="sampleId", required=false) String sampleId) {
@@ -91,6 +103,7 @@ public class sampleController {
 	// 2. 삭제
 	@RequestMapping(value="/sample/removeSample", method=RequestMethod.GET)
 	public String removeSample(@RequestParam(value="sampleNo") int sampleNo) {	// sampleNo에 @RequestParam(value="sampleNo")
+
 		sampleService.removeSample(sampleNo);
 		
 		return "redirect:/sample/sampleList";	//	view 없다. redirect가 있으면 뷰 네임이 아니다.(= response.sendRedirect())
@@ -101,7 +114,7 @@ public class sampleController {
 	public String sampleList(Model model, @RequestParam(value="currentPage", required=false, defaultValue="1") int currentPage,
 			@RequestParam(value="selectValue", required=false) String selectValue, @RequestParam(value="sampleId", required=false) String sampleId) {	// Model model = new Model();
 		System.out.println(":::sampleController.sampleList() START:::");
-		List<SampleAndSampleFile> sampleList = null;
+		List<Sample> sampleList = null;
 		int rowsPerPage = 10;
 		int lastPage;	// 마지막 페이지
 		// 넘어오는 currentPage

@@ -12,7 +12,7 @@ import com.example.springmall.sample.vo.SampleAndSampleFile;
 public interface SampleMapper {		// 추상메서드, 추상클래스, 인터페이스(추상메서드 밖에 없으니까 public abstract 안 써도 됨)
 	
 	// 1. select all
-	List<SampleAndSampleFile> selectSampleAll(int startRow, int rowsPerPage);	// public abstract
+	List<Sample> selectSampleAll(int startRow, int rowsPerPage);	// public abstract
 	
 	// 2. select count
 	int selectSampleCount();
@@ -33,7 +33,11 @@ public interface SampleMapper {		// 추상메서드, 추상클래스, 인터페�
 	Sample selectOneForLogin(Sample sample);
 
 	// 8. select search list 
-	List<SampleAndSampleFile> selectSampleOfSearch(HashMap<String, Object> map);
+	List<Sample> selectSampleOfSearch(HashMap<String, Object> map);
+	
+	// 9. select one for deleting samplefile
+	HashMap<String, Object> selectSampleAndSampleFile(int sampleNo);
+	
 	
 	
 	

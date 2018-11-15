@@ -6,6 +6,13 @@
 	}
  --> 
 <mapper namespace="com.example.springmall.mapper.SampleFileMapper">
+
+	<!-- 2. delete sampleFile-->
+	<delete id="deleteSampleFile" parameterType="int">
+		DELETE FROM samplefile WHERE sample_no=#{sampleNo}
+	</delete>
+
+	<!-- 1. insert sampleFile -->
 	<insert id="insertSampleFile" parameterType="com.example.springmall.sample.vo.SampleFile">
 		INSERT 
 		INTO samplefile(sample_no, samplefile_path, samplefile_name, samplefile_ext, samplefile_type, samplefile_size, samplefile_date) 

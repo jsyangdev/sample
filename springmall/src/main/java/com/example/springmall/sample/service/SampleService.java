@@ -164,7 +164,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		  - java.util.UUID 클래스를 import
 		  - UUID 클래스의 randomUUID() 메소드를 사용해서 유일한 식별자를 생성
 		     - 반환 되는 객체가 UUID 객체이므로 문자열 표현을 얻기 위해 toString() 메소드를 출력
-		 */
+		*/
 		String fileName = UUID.randomUUID().toString();
 		sampleFile.setSamplefileName(fileName);
 
@@ -189,7 +189,6 @@ public class SampleService {	// Mapper를 주입 받을 거
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		// 1+2 => @Transactional
 		System.out.println(":::SampleService.addSample() END:::");
 		
@@ -197,13 +196,41 @@ public class SampleService {	// Mapper를 주입 받을 거
 	}	
 	
 	// 2. 삭제
-	public void removeSample(int sampleNo) {
-		System.out.println(":::SampleService.getSampleTotalRowCount() START:::");
-		sampleMapper.deleteSample(sampleNo);
-		System.out.println(":::SampleService.getSampleTotalRowCount() END:::");
+	public int removeSample(int sampleNo) {
+		System.out.println(":::SampleService.removeSample() START:::");
+		// sampleNo가 업로드한 파일의 정보가 있는지 확인
+		HashMap<String, Object> selectSampleAndSampleFileResult = sampleMapper.selectSampleAndSampleFile(sampleNo);
+		System.out.println(selectSampleAndSampleFileResult+"<---selectSampleAndSampleFileResult");
 		
-	}
-	
+		if(selectSampleAndSampleFileResult != null) {	// 업로드한 파일이 있음
+			System.out.println("업로드한 파일이 존재 !");
+			String samplefilePath = (String) selectSampleAndSampleFileResult.get("samplefile_path");
+			String samplefileName = (String) selectSampleAndSampleFileResult.get("samplefile_name");
+			String samplefileExt = (String) selectSampleAndSampleFileResult.get("samplefile_ext");
+			System.out.println(samplefilePath+"<---samplefilePath");
+			System.out.println(samplefileName+"<---samplefileName");
+			System.out.println(samplefileExt+"<---samplefileExt");
+			
+			File file = new File(samplefilePath+"\\"+samplefileName+"."+samplefileExt);
+			
+			sampleFileMapper.deleteSampleFile(sampleNo);	// db에서 samplefile T에 남아있는 데이터 삭제, transaction-1
+			file.delete();
+			
+			sampleMapper.deleteSample(sampleNo);	// 회원 삭제, transaction-2			
+			
+			
+		} else { // 업로드한 파일이 없는 경우 바로 회원정보만 삭제하면 됨.
+			System.out.println("업로드한 파일이 존재 X ---> 바로 회원 정보 삭제");
+			sampleMapper.deleteSample(sampleNo);
+		}
+		
+		System.out.println(":::SampleService.removeSample() END:::");
+		
+		return 0;
+
+	} 
+		
+
 	// 1. 샘플목록
 	public int getSampleTotalRowCount() {
 		System.out.println(":::SampleService.getSampleTotalRowCount() START:::");
@@ -215,9 +242,9 @@ public class SampleService {	// Mapper를 주입 받을 거
 		return totalRowCount;
 	}
 	
-	public List<SampleAndSampleFile> getSampleAll(HashMap<String, Object> map){
+	public List<Sample> getSampleAll(HashMap<String, Object> map){
 		System.out.println(":::SampleService.getSampleAll() START:::");
-		List<SampleAndSampleFile> selectList = null;
+		List<Sample> selectList = null;
 		int currentPage = (int) map.get("currentPage");
 		int rowsPerPage = (int) map.get("rowsPerPage");
 		String selectvalue = (String) map.get("selectValue");
