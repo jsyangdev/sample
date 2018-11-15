@@ -7,6 +7,11 @@
  --> 
 <mapper namespace="com.example.springmall.mapper.SampleFileMapper">
 
+	<!-- 3. select one sampleFile for update -->
+	<select id="selectOneFileForUpdate" parameterType="int" resultType="com.example.springmall.sample.vo.SampleFile">
+		SELECT samplefile_name as samplefileName, samplefile_ext as samplefileExt, ROUND(samplefile_size/1024, 1) as samplefileSize FROM samplefile WHERE sample_no=#{sampleNo}
+	</select>
+
 	<!-- 2. delete sampleFile-->
 	<delete id="deleteSampleFile" parameterType="int">
 		DELETE FROM samplefile WHERE sample_no=#{sampleNo}

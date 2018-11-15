@@ -21,18 +21,6 @@ public class sampleController {
 	@Autowired
 	private SampleService sampleService;
 	
-	// 5. 업로드 된 파일 삭제
-	
-	public String deleteUploadedFile() {
-		
-		
-		
-		return null;
-	}
-	
-	
-	
-	
 	// 5. 리스트에서 검색 액션
 /*	@RequestMapping(value="/sample/sampleList", method=RequestMethod.POST)
 	public String searchSample(Model model, @RequestParam(value="selectValue", required=false) String selectValue, @RequestParam(value="sampleId", required=false) String sampleId) {
@@ -50,14 +38,17 @@ public class sampleController {
 		return "/sample/sampleList";
 		
 	}*/
-
 	
 	// 4-1. 수정폼
 	@RequestMapping(value="/sample/modifySample", method=RequestMethod.GET)
 	public String modifySample(Model model, @RequestParam(value="sampleNo", required=false) int sampleNo) {
 		System.out.println(":::sampleController.modifySample() START:::");
-		Sample sample = sampleService.getSample(sampleNo);
-		model.addAttribute("sample", sample);
+		HashMap<String, Object> map = null;
+		map = sampleService.getSample(sampleNo);
+				
+		model.addAttribute("sample", map.get("sample"));
+		model.addAttribute("listForUpdate", map.get("listForUpdate"));
+		
 		System.out.println(":::sampleController.modifySample() END:::");
 		
 		return "/sample/modifySample";		// jquery필요, bootstrap필요, Sample command객체 사용할 것을 염두
@@ -103,7 +94,6 @@ public class sampleController {
 	// 2. 삭제
 	@RequestMapping(value="/sample/removeSample", method=RequestMethod.GET)
 	public String removeSample(@RequestParam(value="sampleNo") int sampleNo) {	// sampleNo에 @RequestParam(value="sampleNo")
-
 		sampleService.removeSample(sampleNo);
 		
 		return "redirect:/sample/sampleList";	//	view 없다. redirect가 있으면 뷰 네임이 아니다.(= response.sendRedirect())

@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,7 +31,10 @@ $(document).ready(function() {
 </head>
 <body>
 	<h1>수정화면</h1>
-	<form action="${PageContext.request.contextPath}/sample/modifySample" method="post">
+	<!--
+       	 파일업로드를 위해선 반드시 method="post" enctype="Multipart/form-data"
+     -->
+	<form action="${PageContext.request.contextPath}/sample/modifySample" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="sampleNo" value="${sample.sampleNo}">
 		<div class="form-group">
 			<label for="inputName">아이디</label>
@@ -40,8 +44,22 @@ $(document).ready(function() {
 			<label for="inputPassword">비밀번호</label>
 			<input type="password" class="form-control" id="inputPassword" name="samplePw" value="${sample.samplePw}">
 		</div>
+		<div class="form-group">
+			<label for="inputFile">파일업로드</label>
+			
+				<c:forEach var="row" items="${listForUpdate}">
+					<p>
+						<a href="#this">${row.samplefileName}.${row.samplefileExt}</a>
+						<input type="file" class="form-control" id="inputFile" name="multipartFile">		<!-- 원래 업로드된 file 보여주고 수정할 수 있게 -->
+						(${row.samplefileSize}kb)
+					</p>
+				</c:forEach>
+			
+
+			
+		</div>
 		<div class="form-group text-center">
-			<button type="submit" id="join-submit" class="btn btn-success"">
+			<button type="submit" id="join-submit" class="btn btn-success">
 				수정확인<i class="fa fa-check spaceLeft"></i>		<!--  <i></i>: 글자를 기울여서 표시하는 태그 -->
 			</button>
 		</div>

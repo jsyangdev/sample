@@ -66,12 +66,21 @@ public class SampleService {	// Mapper를 주입 받을 거
 	}
 	
 	// 4-1. 샘플 수정을 위해 특정 샘플 조회
-	public Sample getSample(int sampleNo) {
+	public HashMap<String, Object> getSample(int sampleNo) {
 		System.out.println(":::SampleService.getSample() START:::");
-		Sample sample = sampleMapper.selectOne(sampleNo);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		List<SampleFile> listForUpdate = null;
+		Sample sample = null;
+
+		sample = sampleMapper.selectOne(sampleNo);
+		listForUpdate = sampleFileMapper.selectOneFileForUpdate(sampleNo);
+		
+		map.put("sample", sample);
+		map.put("listForUpdate", listForUpdate);
+
 		System.out.println(":::SampleService.getSample() END:::");
 		
-		return sample;
+		return map;
 	}
 	
 	// 4-2. 샘플 수정
