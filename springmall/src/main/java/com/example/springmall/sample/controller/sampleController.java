@@ -56,9 +56,9 @@ public class sampleController {
 
 	// 4-2. 수정 액션
 	@RequestMapping(value="/sample/modifySample", method=RequestMethod.POST)
-	public String modifySample(Sample sample) {
+	public String modifySample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		System.out.println(":::sampleController.modifySample() START:::");
-		int updateResult = sampleService.modeifySample(sample);
+		int updateResult = sampleService.modeifySample(sampleRequest, request);
 		if(updateResult == 1) {System.out.println("수정 성공 !");}
 		else {System.out.println("수정 실패 !");}
 		System.out.println(":::sampleController.modifySample() END:::");

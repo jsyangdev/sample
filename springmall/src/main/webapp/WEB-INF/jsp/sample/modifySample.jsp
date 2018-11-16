@@ -45,22 +45,17 @@ $(document).ready(function() {
 			<input type="password" class="form-control" id="inputPassword" name="samplePw" value="${sample.samplePw}">
 		</div>
 		<div class="form-group">
-			<label for="inputFile">파일업로드</label>
-			
-				<c:forEach var="row" items="${listForUpdate}">
-					<p>
-						<a href="#this">${row.samplefileName}.${row.samplefileExt}</a>
-						<input type="file" class="form-control" id="inputFile" name="multipartFile">		<!-- 원래 업로드된 file 보여주고 수정할 수 있게 -->
-						(${row.samplefileSize}kb)
-					</p>
+			<label for="inputFile">파일업로드</label><br>	
+				<c:forEach var="row" items="${listForUpdate}" varStatus="var">	<!-- 다중 파일 업로드 처리를 위해서 list로 받음 -->
+					기존에 첨부한 파일:<br>
+					<c:out value="${var.count}. "></c:out>
+					<a href="#this">${row.samplefileName}.${row.samplefileExt}</a>&emsp;&emsp;&emsp;(${row.samplefileSize}kb)
+					<input type="file" class="form-control" id="inputFile" name="multipartFile">	<!-- accept속성 활용 :	accept=".jpg, .jpeg, .png" -->
 				</c:forEach>
-			
-
-			
 		</div>
 		<div class="form-group text-center">
 			<button type="submit" id="join-submit" class="btn btn-success">
-				수정확인<i class="fa fa-check spaceLeft"></i>		<!--  <i></i>: 글자를 기울여서 표시하는 태그 -->
+				수정확인
 			</button>
 		</div>
 	</form>

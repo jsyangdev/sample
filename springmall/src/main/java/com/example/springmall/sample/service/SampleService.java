@@ -83,11 +83,75 @@ public class SampleService {	// Mapper를 주입 받을 거
 		return map;
 	}
 	
-	// 4-2. 샘플 수정
-	public int modeifySample(Sample sample) {
+	// 4-2. 샘플 수정(Transaction처리)
+	public int modeifySample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		System.out.println(":::SampleService.modeifySample() START:::");
 		int updateResult = 0;
-		updateResult = sampleMapper.updateSample(sample);
+		
+	// 1. sample vo 만들어 update쿼리 호출
+		Sample sample = new Sample();
+		sample.setSampleNo(sampleRequest.getsampleNo());
+		sample.setSampleId(sampleRequest.getSampleId());
+		sample.setSamplePw(sampleRequest.getSamplePw());
+				
+		sampleMapper.updateSample(sample);
+		
+	// 2. SampleFile 클래스 통해 생성된 객체 내에 업로드 파일 정보 저장
+		SampleFile sampleFile = new SampleFile();
+		//MultipartFile multipartFile = sampleRequest.getMultipartFile();
+		
+		// 2-1 sampleNo: sample vo에서 get
+		sampleFile.setSampleNo(sample.getSampleNo());
+		System.out.println(sample.getSampleNo()+"<---sample.getSampleNo()");
+		
+		// 2-2 samplefilePath: request객체 내에서 realPath메서드 호출하여 상대경로 저장
+		String realPath = request.getSession().getServletContext().getRealPath("/upload/");
+		System.out.println(realPath+"<---realPath");
+		sampleFile.setSamplefilePath(realPath);
+		
+		// 이 상대경로에 디렉토리가 없다면 디렉토리 생성
+		File dir = new File(realPath);
+		if(dir.exists() == false) {
+			System.out.println("디렉토리 생성 !");
+			dir.mkdir();
+		} else {
+			System.out.println("디렉토리 존재 !");
+		}
+		
+		// 2-3 samplefileName:
+		String fileName = UUID.randomUUID().toString();
+		sampleFile.setSamplefileName(fileName);
+		
+		// 2-4 samplefileExt:
+		MultipartFile multipartFile = sampleRequest.getMultipartFile();
+		System.out.println(multipartFile.getOriginalFilename()+"<---multipartFile.getOriginalFilename() addSample");
+		String originalFileName = multipartFile.getOriginalFilename();
+		// originalFileName = 이름.확장자
+		int pos = originalFileName.lastIndexOf(".");
+		System.out.println(pos+"<---pos");
+		String ext = originalFileName.substring(pos+1);	// 조작해서 확장자 만들면 된다.
+		System.out.println(ext+"<---ext");
+		sampleFile.setSamplefileExt(ext);
+		
+		// 2-5 samplefileType:
+		sampleFile.setSamplefileType(multipartFile.getContentType());
+		
+		// 2-6 samplefileSize:
+		sampleFile.setSamplefileSize(multipartFile.getSize());
+		
+		// 2-7 samplefileDate: mapper에서 now() 함수 쓸 것
+		
+		// 2-8 sql Mapper 내 update 호출
+		updateResult = sampleMapper.updateSample(sampleRequest);
+		
+		
+		
+		
+		
+		
+		
+	
+		
 		System.out.println(updateResult+"<---updateResult");
 		System.out.println(":::SampleService.modeifySample() END:::");
 
@@ -95,7 +159,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		
 	}
 	
-	// 3. 입력 액션
+	// 3. 입력 액션(Transaction처리)
 	public int addSample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		/*
 			파일 업로드가 포함된 입력 액션 설계
