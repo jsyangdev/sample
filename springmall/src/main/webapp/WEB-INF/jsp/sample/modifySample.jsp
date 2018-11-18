@@ -49,7 +49,7 @@ $(document).ready(function() {
 				<c:forEach var="row" items="${listForUpdate}" varStatus="var">	<!-- 다중 파일 업로드 처리를 위해서 list로 받음 -->
 					기존에 첨부한 파일:<br>
 					<c:out value="${var.count}. "></c:out>
-					<a href="#this">${row.samplefileName}.${row.samplefileExt}</a>&emsp;&emsp;&emsp;(${row.samplefileSize}kb)
+					<a href="${PageContext.request.contextPath}/sample/download?fileName=${row.samplefileName}">${row.samplefileName}.${row.samplefileExt}</a>&emsp;&emsp;&emsp;(${row.samplefileSize}kb)
 					<input type="file" class="form-control" id="inputFile" name="multipartFile">	<!-- accept속성 활용 :	accept=".jpg, .jpeg, .png" -->
 				</c:forEach>
 		</div>

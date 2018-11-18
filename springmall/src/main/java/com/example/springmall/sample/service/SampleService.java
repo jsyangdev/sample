@@ -84,6 +84,13 @@ public class SampleService {	// Mapper를 주입 받을 거
 	}
 	
 	// 4-2. 샘플 수정(Transaction처리)
+	
+	/*
+	 * 만약 화면에서 회원 id, pw만 고치면 샘플맵퍼의 메서드만 호출되도록 해야되고,
+	 * 파일 업로드만 수정하면 샘플파일맵퍼에 메서드만 호출
+	 * 둘 다 고치면 샘플맵퍼, 샘플파일맵퍼 모두 호출 되도록	
+	 */
+	
 	public int modeifySample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		System.out.println(":::SampleService.modeifySample() START:::");
 		int updateResult = 0;
@@ -96,9 +103,24 @@ public class SampleService {	// Mapper를 주입 받을 거
 				
 		sampleMapper.updateSample(sample);
 		
+	// 업로드된 파일을 수정했다면 기존에 있었던 파일을 실제 디렉토리 내에서 삭제 (->그 후, 다시 수정된 파일 업로드. DB내 파일 정보는 업데이트)
+		int sampleNo = sample.getSampleNo();
+		List<SampleFile> listForUpdate = sampleFileMapper.selectOneFileForUpdate(sampleNo);
+		
+		// sampleFile vo에 셋팅된 값들을 겟팅하여 특정 sampleNo가 기존에 올렸던 첨부파일을 서버에서 삭제
+		for(int i=0; i<listForUpdate.size(); i++) {
+			SampleFile dd = listForUpdate.get(i);
+			String samplefilePath = dd.getSamplefilePath();
+			String samplefileName = dd.getSamplefileName();
+			String samplefileExt = dd.getSamplefileExt();
+			File file = new File(samplefilePath+"\\"+samplefileName+"."+samplefileExt);
+			sampleFileMapper.deleteSampleFile(sampleNo);
+			file.delete();
+		}
+		
+
 	// 2. SampleFile 클래스 통해 생성된 객체 내에 업로드 파일 정보 저장
 		SampleFile sampleFile = new SampleFile();
-		//MultipartFile multipartFile = sampleRequest.getMultipartFile();
 		
 		// 2-1 sampleNo: sample vo에서 get
 		sampleFile.setSampleNo(sample.getSampleNo());
@@ -142,17 +164,27 @@ public class SampleService {	// Mapper를 주입 받을 거
 		// 2-7 samplefileDate: mapper에서 now() 함수 쓸 것
 		
 		// 2-8 sql Mapper 내 update 호출
-		updateResult = sampleMapper.updateSample(sampleRequest);
+		updateResult = sampleFileMapper.updateSampleFile(sampleFile);
+		System.out.println(updateResult+"<---updateResult");
 		
+	// 첨부파일을 하드디스크에 복사
+		// 1. 빈 파일을 하나 만든다.
+		File f = new File(realPath+"\\"+fileName+"."+ext);
+		System.out.println(f+"<---f");
 		
-		
-		
-		
+		// 2.
+		try {
+			multipartFile.transferTo(f);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		
 	
 		
-		System.out.println(updateResult+"<---updateResult");
+		
 		System.out.println(":::SampleService.modeifySample() END:::");
 
 		return updateResult;

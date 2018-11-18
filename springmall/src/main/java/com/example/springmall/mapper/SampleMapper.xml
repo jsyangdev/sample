@@ -78,7 +78,7 @@
 		ON s.sampleNo = sf.sample_no
 		ORDER BY sampleNo
 		LIMIT #{startRow}, #{rowsPerPage} -->
-		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample ORDER BY sampleNo LIMIT #{startRow}, #{rowsPerPage}
+		SELECT sampleNo as sampleNo, sampleId as sampleId, samplePw as samplePw FROM sample ORDER BY sampleNo ASC LIMIT #{startRow}, #{rowsPerPage}
 	</select>
 	
 </mapper>

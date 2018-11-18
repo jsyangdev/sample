@@ -3,12 +3,18 @@ package com.example.springmall.sample.controller;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.example.springmall.sample.service.SampleService;
@@ -16,10 +22,68 @@ import com.example.springmall.sample.vo.Sample;
 import com.example.springmall.sample.vo.SampleAndSampleFile;
 import com.example.springmall.sample.vo.SampleRequest;
 
+import jdk.internal.jline.internal.Log;
+
 @Controller
 public class sampleController {
 	@Autowired
 	private SampleService sampleService;
+	
+	// 첨부파일 다운로드
+	@RequestMapping(value="/sample/download", method=RequestMethod.GET, produces=org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@ResponseBody
+	public ResponseEntity<Resource> downloadFile(String fileName) {
+		System.out.println(":::sampleController.downloadFile() START:::");
+		System.out.println("download file: " + fileName);
+		
+		//String realPath = request.getSession().getServletContext().getRealPath("/upload/");
+		//File f = new File();
+		
+		org.springframework.core.io.Resource resource = new FileSystemResource("c:\\upload\\"+fileName);
+		
+		
+		
+		System.out.println("resource: "+resource);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	// 5. 리스트에서 검색 액션
 /*	@RequestMapping(value="/sample/sampleList", method=RequestMethod.POST)

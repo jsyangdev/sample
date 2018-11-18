@@ -7,9 +7,19 @@
  --> 
 <mapper namespace="com.example.springmall.mapper.SampleFileMapper">
 
+	<!-- 4. update sampleFile -->
+	<update id="updateSampleFile" parameterType="com.example.springmall.sample.vo.SampleFile">
+	
+		UPDATE samplefile SET samplefile_path=#{samplefilePath}, samplefile_name=#{samplefileName}, samplefile_ext=#{samplefileExt}, samplefile_type=#{samplefileType}, samplefile_size=#{samplefileSize}, samplefile_date=now()
+	
+	</update>
+
+
+
+
 	<!-- 3. select one sampleFile for update -->
 	<select id="selectOneFileForUpdate" parameterType="int" resultType="com.example.springmall.sample.vo.SampleFile">
-		SELECT samplefile_name as samplefileName, samplefile_ext as samplefileExt, ROUND(samplefile_size/1024, 1) as samplefileSize FROM samplefile WHERE sample_no=#{sampleNo}
+		SELECT samplefile_path as samplefilePath, samplefile_name as samplefileName, samplefile_ext as samplefileExt, ROUND(samplefile_size/1024, 1) as samplefileSize FROM samplefile WHERE sample_no=#{sampleNo}
 	</select>
 
 	<!-- 2. delete sampleFile-->
