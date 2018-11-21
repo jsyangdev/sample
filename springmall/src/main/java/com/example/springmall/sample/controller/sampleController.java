@@ -15,8 +15,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,9 +29,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.example.springmall.sample.service.SampleService;
 import com.example.springmall.sample.vo.Sample;
 import com.example.springmall.sample.vo.SampleAndSampleFile;
+import com.example.springmall.sample.vo.SampleFile;
 import com.example.springmall.sample.vo.SampleRequest;
-
-import jdk.internal.jline.internal.Log;
 
 @Controller
 public class sampleController {
@@ -37,68 +38,86 @@ public class sampleController {
 	private SampleService sampleService;
 	
 	// 첨부파일 다운로드
-	
-	@RequestMapping(value="/sample/download", method=RequestMethod.GET)
+
+/*	@RequestMapping(value="/sample/download", method=RequestMethod.GET)
 	public ModelAndView callDownload(@RequestParam(value="sampleNo") int sampleNo, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		System.out.println(":::sampleController.downloadFile() START:::");
 		System.out.println("sampleNo: " + sampleNo);
 		
-
-		return null;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-/*	@RequestMapping(value="/sample/download", method=RequestMethod.GET, produces=org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	@ResponseBody
-	public ResponseEntity<Object> downloadFile(String fileName, String filePath) {
-		System.out.println(":::sampleController.downloadFile() START:::");
-		System.out.println("download file: " + fileName);
-		System.out.println("download path: " + filePath);
+		List<SampleFile> sampleFileList = sampleService.getSampleFile(sampleNo);
 		
-		org.springframework.core.io.Resource resource = new FileSystemResource(filePath+fileName);
+		String realPath = null;
+		String fileName = null;
+		
+		for(int i=0; i<sampleFileList.size(); i++) {
+			SampleFile oneSampleFile = new SampleFile();
+			oneSampleFile = sampleFileList.get(i);
+			realPath = oneSampleFile.getSamplefilePath();
+			System.out.println(realPath+"<---realPath");
+			fileName = oneSampleFile.getSamplefileName();
+			System.out.println(fileName+"<---fileName");
+			
+		}
+		
+		// 전체 경로를 인자로 넣어 파일 객체를 생성
+		File downloadFile = new File(realPath + fileName);
+		
+
+		return new ModelAndView("FileDownloadView", "downloadFile", downloadFile);
+	}*/
+
+	/*
+	 * ResponseEntity 타입이란?
+	 * 		개발자가 결과 데이터와 HTTP상태코드를 직접 제어할 수 있는 클래스.
+	 * 		주어진 바디, 헤더들, 상태코드로 새로운 HttpEntity를 생성한다.
+	 * 		public ResponseEntity<Resource>(①Resource body, ②MultiValueMap<String, String> headers, ③HttpStatus status) {}
+	 * 		① body the entity body : 결과 데이터, 바디에 삽입할 정보를 유지하는 오브젝트
+	 *		② headers the entity headers : HTTP 응답
+	 *		③ status the status code : 
+	 */
+	@RequestMapping(value="/sample/download", method=RequestMethod.GET, produces=org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@ResponseBody	// @ResponseBody 어노테이션이 적용된 경우, 리턴 객체를 HTTP 응답으로 전송한다. HttpMessageConverter를 이용해서 객체를 HTTP 응답 스트림으로 변환
+	public ResponseEntity<org.springframework.core.io.Resource> downloadFile(@RequestParam(value="sampleNo") int sampleNo) {
+		System.out.println(":::sampleController.downloadFile() START:::");
+		
+		List<SampleFile> sampleFileList = sampleService.getSampleFile(sampleNo);
+		
+		String realPath = null;
+		String fileName = null;
+		String samplefileExt = null;
+		
+		for(int i=0; i<sampleFileList.size(); i++) {
+			SampleFile oneSampleFile = new SampleFile();
+			oneSampleFile = sampleFileList.get(i);
+			realPath = oneSampleFile.getSamplefilePath();
+			System.out.println(realPath+"<---realPath");
+			fileName = oneSampleFile.getSamplefileName();
+			System.out.println(fileName+"<---fileName");
+			samplefileExt = oneSampleFile.getSamplefileExt();
+			
+		}
+		/* 
+		 * FileSystemResource :
+		 * 		파일시스템의 특정 파일로 부터 정보를 읽어온다.
+		 */
+		org.springframework.core.io.Resource resource = new FileSystemResource(realPath+"\\"+fileName+"."+samplefileExt);
 		System.out.println("resource: "+resource);
 		
 		String resourceName = resource.getFilename();
+		System.out.println("resourceName: "+resourceName);
 		
 		HttpHeaders headers = new HttpHeaders();
+		
 		try {
 			headers.add("Content-Disposition", "attachment; filename=" + new String(resourceName.getBytes("UTF-8"), "ISO-8859-1"));
 			
 		}catch(UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
-		return null;
-		//return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
-	}*/
+		
+		return new ResponseEntity<org.springframework.core.io.Resource>(resource, headers, HttpStatus.OK);
+	
+	}
 	
 	
 

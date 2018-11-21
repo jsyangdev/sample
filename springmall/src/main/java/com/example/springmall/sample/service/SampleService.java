@@ -31,6 +31,16 @@ public class SampleService {	// Mapper를 주입 받을 거
 	@Autowired
 	private SampleFileMapper sampleFileMapper;
 	
+	public List<SampleFile> getSampleFile(int sampleNo) {
+		System.out.println(":::SampleService.getSampleFile() START:::");
+		System.out.println("sampleNo: "+sampleNo);
+		List<SampleFile> sampleFileList = sampleFileMapper.selectOneFileForUpdate(sampleNo);
+		
+		System.out.println(":::SampleService.getSampleFile() END:::");
+		return sampleFileList;
+		
+	}
+	
 	// 6. 샘플 검색
 /*	public List<SampleAndSampleFile> getSampleOfSearch(HashMap<String, Object> map){
 		System.out.println(":::SampleService.getSampleOfSearch() START:::");

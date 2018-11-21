@@ -8,14 +8,9 @@
 <mapper namespace="com.example.springmall.mapper.SampleFileMapper">
 
 	<!-- 4. update sampleFile -->
-	<update id="updateSampleFile" parameterType="com.example.springmall.sample.vo.SampleFile">
-	
+	<update id="updateSampleFile" parameterType="com.example.springmall.sample.vo.SampleFile">	
 		UPDATE samplefile SET samplefile_path=#{samplefilePath}, samplefile_name=#{samplefileName}, samplefile_ext=#{samplefileExt}, samplefile_type=#{samplefileType}, samplefile_size=#{samplefileSize}, samplefile_date=now()
-	
 	</update>
-
-
-
 
 	<!-- 3. select one sampleFile for update -->
 	<select id="selectOneFileForUpdate" parameterType="int" resultType="com.example.springmall.sample.vo.SampleFile">
@@ -33,4 +28,5 @@
 		INTO samplefile(sample_no, samplefile_path, samplefile_name, samplefile_ext, samplefile_type, samplefile_size, samplefile_date) 
 		VALUES (#{sampleNo},#{samplefilePath},#{samplefileName},#{samplefileExt},#{samplefileType},#{samplefileSize},NOW())
 	</insert>
+	
 </mapper>
