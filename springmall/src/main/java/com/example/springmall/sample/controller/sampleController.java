@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -179,12 +180,20 @@ public class sampleController {
 	@RequestMapping(value="/sample/addSample", method=RequestMethod.POST)
 	public String addSample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		System.out.println(":::sampleController.addSample() START:::");
-		// Sample 친구들 존재할 수 있다. (베이스: Sample 테이블)
-		// command객체의 멤버변수  == input 태그의 name속성  ---> 표준 setter를 호출
-		System.out.println("sampleRequest.multipartFile: "+sampleRequest.getMultipartFile());
-		int row = sampleService.addSample(sampleRequest, request);
+		/*
+			Sample 친구들 존재할 수 있다. (베이스: Sample 테이블)
+		 
+			command객체 : 처리해야 할 파라미터가 늘어나면 늘어날 수록 작성해야 할 코드가 많아진다.
+					         그래서 스프링은 커맨드 객체라는 것을 지원하고 있다.
+					    http 요청 파라미터(request)의 이름(name)을 이용해 setter 메소드를 작성한 클래스를 만들고, 
+					         이 클래스의 객체(커맨드 객체)를 메소드의 파라미터 값으로 넣어주면,
+					         스프링은 요청 파라미터의 값을 커맨드 객체에 담아준다.
+			command객체(sampleRequest)의 멤버변수  = input태그의 name속성  ---> 표준 setter를 호출			       
+					       
+		 */
+		int totalRow = sampleService.addSample(sampleRequest, request);
 		// view 없으니까 바로 리턴
-		if(row == 1) {System.out.println("입력 성공 !");}
+		if(totalRow >= 1) {System.out.println("입력 성공 !");}
 		else {System.out.println("입력 실패 !");}
 		System.out.println(":::sampleController.addSample() END:::");
 

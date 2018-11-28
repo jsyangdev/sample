@@ -109,8 +109,7 @@ public class SampleService {	// Mapper를 주입 받을 거
 		Sample sample = new Sample();
 		sample.setSampleNo(sampleRequest.getsampleNo());
 		sample.setSampleId(sampleRequest.getSampleId());
-		sample.setSamplePw(sampleRequest.getSamplePw());
-				
+		sample.setSamplePw(sampleRequest.getSamplePw());				
 		sampleMapper.updateSample(sample);
 		
 	// 업로드된 파일을 수정했다면 기존에 있었던 파일을 실제 디렉토리 내에서 삭제 (->그 후, 다시 수정된 파일 업로드. DB내 파일 정보는 업데이트)
@@ -204,110 +203,115 @@ public class SampleService {	// Mapper를 주입 받을 거
 	// 3. 입력 액션(Transaction처리)
 	public int addSample(SampleRequest sampleRequest, MultipartHttpServletRequest request) {
 		/*
-			파일 업로드가 포함된 입력 액션 설계
+			파일 업로드가 포함된 '입력 액션' 설계
 		 	SampleRequest  ---> Sample , SampleFile (분리시킨다)
 		 	1. multipartfile 파일데이터  -> 저장
-		 	2. multipartfile 정보 -> 새로운 정보 추가 -> SampleFile
-		 */
-		
+		 	2. multipartfile 정보 -> 새로운 정보 추가 -> SampleFile에 셋팅
+		 */		
 		System.out.println(":::SampleService.addSample() START:::");
-		// 1.
+		int row = 0;
+		int totalRow = 0;	// samplefile 테이블에 첨부파일의 데이터가 몇 개나 성공적으로 입력 되었는지 알아보기위한 변수
+		
+	// 1. sample vo 만들어서 화면에서 입력 받은 기본 정보들 셋팅 후, 맵퍼 호출
 		Sample sample = new Sample();
 		sample.setSampleId(sampleRequest.getSampleId());
 		sample.setSamplePw(sampleRequest.getSamplePw());
-		sampleMapper.insertSample(sample);	// auto increment에 의해서 sampleNo가 만들어졌을 것이다. 이 메서드 실행 후에 sample에 아디와 비번이 채워져있음.
-		// System.out.println(sample.getSampleNo()+"<---sample.getSampleNo()");	sampleNo 겟팅
+		sampleMapper.insertSample(sample);	// Auto Increment에 의해서 sampleNo가 만들어진다. insertSample(sample) 메서드 실행 후, sampleNo(기본키) 값이 sample vo의 멤버필드에 채워진다.
+		System.out.println(sample.getSampleNo()+"<---sample.getSampleNo()");	// sampleNo 겟팅 후, 출력
 		
-		// 2.
-		SampleFile sampleFile = new SampleFile();
-		MultipartFile multipartFile = sampleRequest.getMultipartFile();	// 화면에서 받아온 multipart를 MultipartFile인터페이스 데이터 타입으로 변수 선언하여 저장
-		// (1) SampleFileNo : Auto Increment로 해결
-		// (2) SampleNo
-		sampleFile.setSampleNo(sample.getSampleNo());	// insertSample(sample) 후에 pk 값이 sample에 채워진다.
-		System.out.println(sample.getSampleNo()+"<---sample.getSampleNo()");	// sampleNo(기본키) getting
-		
-		/* 
-			(3) samplefilePath
-			  - 홈디렉토리 : 웹서버가 기본적으로 찾는 디렉토리
-			  - 홈디렉토리에 저장 - 복잡한 루틴을 통해서 내가 원하는 위치에 !
-		
-	 		ⓐ 경로를 절대경로로 지정했을 때
-			- 문제점 : 근데 이렇게 적으면 클라우드로 가거나 다른 PC로 갔을 때 c드라이브에 uploads가 없을 수도 있다.
-			String realPath = "c:\\uploads";	
+	// 2. sampleFile vo 만들어서 첨부파일들에 대한 정보를 셋팅 후, 맵퍼 호출		
+		MultipartFile[] uploadFiles = sampleRequest.getMultipartFile();	// 화면에서 첨부한 파일들의 정보를 배열 타입으로 받는다.
+		for(MultipartFile multipartFile : uploadFiles) {	// 첨부파일들을 반복문을 통해 각각 SampleFile vo에 정보들을 셋팅 시킨 후, 맵퍼 호출			
+			SampleFile sampleFile = new SampleFile();
+			
+			// 1) samplefileNo : Auto Increment로 해결			
+			// 2) sampleNo
+			sampleFile.setSampleNo(sample.getSampleNo());
+			
+			/* 
+				3) samplefilePath
+				  - 홈디렉토리 : 웹서버가 기본적으로 찾는 디렉토리
+			
+			 		a. 경로를 절대경로로 지정했을 때
+					String appointedPath = "c:\\uploads";	
+					sampleFile.setSamplefilePath(appointedPath);
+					- 문제점 : 이렇게 저장하면 클라우드로 가거나 다른 PC로 갔을 때 c드라이브에 uploads 디렉토리가 없을 수도 있다.
+					
+			 		b. 경로를 상대경로로 지정했을 때
+			*/
+			String realPath = request.getSession().getServletContext().getRealPath("/upload");
+			System.out.println(realPath+"<---realPath");
 			sampleFile.setSamplefilePath(realPath);
+			
+			/*
+			  1. File 객체(java.io.File) : 하드디스크에 존재하는 파일에 대한 경로 또는 참조를 추상화한 객체. 즉, 새 파일에 대한 경로나 만들고자 하는 디렉토리를 캡슐화 한 것.
+			  2. File 객체의 용도 :
+			  		① 물리적 파일시스템에 대해 캡슐화한 경로명을 확인하고, 실제 파일이나 디렉토리와 대응하는지 알아볼 때
+			  		② 파일 스트림 객체를 생성하고자 할 때
+			  3. File 클래스의 인스턴스 생성 :
+			  		① 디렉토리 생성 : File dir = new File("디렉토리의 경로");
+			 		② 부모 디렉토리를 파라미터로 인스턴스 생성 : File newFile = new File(dir,"파일명");
+			 		③ 부모 디렉토리를 String 타입으로 전달 : File newFile = new File("디렉토리의 경로","파일명");
+			  		④ File 객체를 URI 객체로부터 생성하는 방법도 있다.
+			 		- 출처 : http://javafactory.tistory.com/1370
+			 */			
+			File dir = new File(realPath);	// File 클래스의 인스턴스 생성
+			if(dir.exists() == false) {	// exists() : File 객체가 참조하는 파일이나 디렉토리가 존재하면 true 리턴
+				System.out.println("dir객체참조변수가 참조하는 경로로 디렉토리 생성 !");
+				dir.mkdir();	// mkdir(): 현재 파일 객체가 참조하는 경로로 디렉토리를 생성. ( ※반드시 부모 디렉토리가 있어야 함)
+			} else {
+				System.out.println("디렉토리가 존재합니다 !");
+			}
 
-	 		ⓑ경로를 상대경로로 지정했을 때
-		*/
-		String realPath = request.getSession().getServletContext().getRealPath("/upload");
-		System.out.println(realPath+"<---realPath");
-		sampleFile.setSamplefilePath(realPath);
-		
-		/*
-		  1. File 객체(java.io.File) : 하드디스크에 존재하는 파일에 대한 경로 또는, 참조를 추상화한 객체. 즉, 새 파일에 대한 경로나 만들고자 하는 디렉토리를 캡슐화 한 것.
-		  2. File 객체의 용도 :
-		  		(1) 물리적 파일시스템에 대해 캡슐화한 경로명을 확인하고, 실제 파일이나 디렉토리와 대응하는지 알아볼 때
-		  		(2) 파일 스트림 객체를 생성하고자 할때
-		  3. File Class의 인스턴스 생성 :
-		  		(1) 디렉토리 생성 : File dir = new File("디렉토리의 경로");
-		 		(2) 부모 디렉토리를 파라미터로 인스턴스 생성 : File newFile = new File(dir,"파일명");
-		 		(3) 부모 디렉토리를 String 타입으로 전달 : File newFile = new File("디렉토리의 경로","파일명");
-		  		(4) File 객체를 URI 객체로부터 생성하는것도 방법도 있다.
-		 		- 출처 : http://javafactory.tistory.com/1370
-		 */
-		
-		File dir = new File(realPath);	// File class의 인스턴스 생성 (new File(String pathname))
-		if(dir.exists() == false) {	// exists(): File 객체가 참조하는 파일이나 디렉토리가 '실존'하면 true 리턴
-			System.out.println("dir객체참조변수가 참조하는 경로로 디렉토리 생성 !");
-			dir.mkdir();	// mkdir(): 현재 파일 객체가 참조하는 경로로 디렉토리를 생성. ( ※반드시 부모 디렉토리가 있어야 한다. )
-		} else {
-			System.out.println("실존하는 디렉토리가 없습니다.");
-		}
+			// 4) 확장자
+			String originalFileName = multipartFile.getOriginalFilename();	// originalFileName = 이름.확장자
+			System.out.println(originalFileName+"<---originalFileName");
+			int pos = originalFileName.lastIndexOf(".");	// lastIndexOf : 오른쪽부터 문자열을 센다.
+			System.out.println(pos+"<---pos");	// 4
+			String ext = originalFileName.substring(pos+1);
+			System.out.println(ext+"<---ext");
+			sampleFile.setSamplefileExt(ext);
+			
+			/* 
+			 5) 이름
+			 	UUID 클래스를 사용해서 유일한 식별자를 생성
+				  ① java.util.UUID 클래스를 import
+				  ② UUID 클래스의 randomUUID() 메소드를 사용해서 유일한 식별자를 생성
+				  ③ 반환 되는 객체가 UUID 객체이므로 문자열 표현을 얻기 위해 toString() 메소드를 사용하여 출력
+			*/
+			String fileName = UUID.randomUUID().toString();
+			sampleFile.setSamplefileName(fileName);
 
-		// (4) 확장자
-		System.out.println(multipartFile.getOriginalFilename()+"<---multipartFile.getOriginalFilename() addSample");
-		String originalFileName = multipartFile.getOriginalFilename();
-		// originalFileName = 이름.확장자
-		int pos = originalFileName.lastIndexOf(".");
-		System.out.println(pos+"<---pos");
-		String ext = originalFileName.substring(pos+1);	// 조작해서 확장자 만들면 된다.
-		System.out.println(ext+"<---ext");
-		sampleFile.setSamplefileExt(ext);
+			// 6) 타입
+			sampleFile.setSamplefileType(multipartFile.getContentType());
+			
+			// 7) 크기
+			sampleFile.setSamplefileSize(multipartFile.getSize());
+			
+			// 8) samplefile 테이블에 값들 insert 시키는 메서드 호출하기
+			row = sampleFileMapper.insertSampleFile(sampleFile);
+			System.out.println(row+"<---row");
+			totalRow = totalRow + row;
+			System.out.println(totalRow+"<---totalRow");
+			
+			// 9) multipartFile 파일을 하드디스크에 복사
+			// 9-1. 원하는 이름의 File 인스턴스를 만든다.
+			File f = new File(realPath+"\\"+fileName+"."+ext);
+			System.out.println(f+"<---f");
+			try {	// try, catch 필요 (예외가 발생할 수도 있다. 예를 들면, 하드디스크 용량이 부족)
+				multipartFile.transferTo(f);	// 9-2. 첨부된 multipartFile 파일을 지정한 파일로 트랜스퍼 시킨다.
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		
-		/* 
-		 (5) 이름
-		 UUID 클래스를 사용해서 유일한 식별자를 생성
-		  - java.util.UUID 클래스를 import
-		  - UUID 클래스의 randomUUID() 메소드를 사용해서 유일한 식별자를 생성
-		     - 반환 되는 객체가 UUID 객체이므로 문자열 표현을 얻기 위해 toString() 메소드를 출력
-		*/
-		String fileName = UUID.randomUUID().toString();
-		sampleFile.setSamplefileName(fileName);
+		}	// end for
 
-		// (6) 타입
-		sampleFile.setSamplefileType(multipartFile.getContentType());
-		
-		// (7) 크기
-		sampleFile.setSamplefileSize(multipartFile.getSize());
-		
-		// samplefile 테이블에 값들 insert 시키는 메서드 호출하기
-		int row = sampleFileMapper.insertSampleFile(sampleFile);
-		
-		// ★ multipartFile파일을 하드디스크에 복사 ! ★
-		// 1. 내가 원하는 이름의 빈 파일을 하나 만들자 !
-		File f = new File(realPath+"\\"+fileName+"."+ext);
-		System.out.println(f+"<---f");
-
-		try {	// try, catch 필요 (예외가 날 수도 있으니까. 예를 들면 하드디스크 용량이 부족하다던가)
-			multipartFile.transferTo(f);// 2. 그리고 multipartFile파일을 빈 파일로 복사하자 !
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		// 1+2 => @Transactional
 		System.out.println(":::SampleService.addSample() END:::");
 		
-		return row;
+		return totalRow;
 	}	
 	
 	// 2. 삭제

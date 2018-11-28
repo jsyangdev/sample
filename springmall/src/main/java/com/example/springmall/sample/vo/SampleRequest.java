@@ -1,12 +1,14 @@
 package com.example.springmall.sample.vo;
 
+import java.util.Arrays;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public class SampleRequest {
 	private int sampleNo;
 	private String sampleId;
 	private String samplePw;
-	private MultipartFile multipartFile ;
+	private MultipartFile[] multipartFile ;
 	
 	public int getsampleNo() {
 		return sampleNo;
@@ -29,18 +31,19 @@ public class SampleRequest {
 		System.out.println(samplePw+"<---samplePw setSamplePw SampleRequest");
 		this.samplePw = samplePw;
 	}
-	public MultipartFile getMultipartFile() {
+	public MultipartFile[] getMultipartFile() {
 		return multipartFile;
 	}
-	public void setMultipartFile(MultipartFile multipartFile) {
+	public void setMultipartFile(MultipartFile[] multipartFile) {
 		System.out.println(multipartFile+"<---multipartFile setMultipartFile SampleRequest");
 		this.multipartFile = multipartFile;
 	}
 	
 	@Override
 	public String toString() {
-		return "SampleRequest [sampleId=" + sampleId + ", samplePw=" + samplePw + ", multipartFile=" + multipartFile
-				+ "]";
+		return "SampleRequest [sampleNo=" + sampleNo + ", sampleId=" + sampleId + ", samplePw=" + samplePw
+				+ ", multipartFile=" + Arrays.toString(multipartFile) + "]";
 	}
+
 	
 }
